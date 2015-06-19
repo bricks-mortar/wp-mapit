@@ -1,0 +1,28 @@
+{
+  "name": "wp-mapit",
+  "version": "0.1.0",
+  "description": "A plugin for plotting markers to Google Map",
+  "main": "wp-mapit.php",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npm run build:js",
+    "build:js": "browserify ./assets/js/src/index.js -t babelify -o ./assets/js/wpmapit.js",
+    "watch:js": "watchify ./assets/js/src/index.js -t babelify -o ./assets/js/wpmapit.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bricks-mortar/wp-mapit.git"
+  },
+  "author": "Dane Grant",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bricks-mortar/wp-mapit/issues"
+  },
+  "homepage": "https://github.com/bricks-mortar/wp-mapit#readme",
+  "devDependencies": {
+    "babel-eslint": "^3.1.17",
+    "babelify": "^6.1.2",
+    "browserify": "^10.2.4",
+    "watchify": "^3.2.2"
+  }
+}

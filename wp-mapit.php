@@ -2,10 +2,27 @@
 
 /*
 Plugin Name: WP MapIt
-Plugin URI: http://URI_Of_Page_Describing_Plugin_and_Updates
-Description: A brief description of the Plugin.
-Version: 1.0
-Author: Dane
-Author URI: http://URI_Of_The_Plugin_Author
-License: A "Slug" license name e.g. GPL2
+Plugin URI: https://github.com/bricks-mortar/wp-mapit
+Description: A plugin for plotting markers to Google Maps
+Version: 0.1.0
+Author: Dane Grant <dane@bricksandmortarweb.com>
+Author URI: http://www.bricksandmortarweb.com
+License: GPL2
 */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit();
+}
+
+/**
+ * Class WP_MapIt
+ */
+class WP_MapIt {
+
+	public function __construct() {
+
+	}
+
+}
+
+$mapit = new WP_MapIt();
