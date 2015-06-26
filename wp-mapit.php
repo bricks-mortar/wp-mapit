@@ -15,9 +15,46 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Class WP_MapIt
+ *
+ * @class WP_MapIt
+ * @version 0.1.0
+ * @author Dane Grant
  */
 class WP_MapIt {
 
+	/**
+	 * Instance of WP_MapIt
+	 *
+	 * @since 0.1.0
+	 * @access private
+	 * @var object $instance
+	 */
+	private static $instance;
+
+
+	/**
+	 * Plugin file path
+	 *
+	 * @since 0.1.0
+	 * @var string $file
+	 */
+	public $file = __FILE__;
+
+
+	/**
+	 * Cache of location data
+	 *
+	 * @since 0.1.0
+	 * @var array
+	 */
+	public $locations;
+
+
+	/**
+	 * Initialize the class
+	 *
+	 * @since 0.1.0
+	 */
 	public function __construct() {
 
 
@@ -32,19 +69,46 @@ class WP_MapIt {
 		$this->post_types = new WP_MapIt_Post_Types();
 
 		// Activation
-		register_activation_hook( basename( dirname( __FILE__ ) ) . '/' . basename( __FILE__ ), array( $this, 'activate' ) );
+		register_activation_hook( __FILE__, array( $this, 'activate' ) );
+
+		// Actions
+		add_action( 'wp_enqueue_scripts', array( $this, 'frontend_scripts' ) );
 
 	}
 
+
 	/**
-	 * Called on plugin activation
+	 * Singleton
+	 *
+	 * An global instance of the class. Used to retrieve the instance
+	 * to use on other files/plugins/themes.
+	 *
+	 * @since 0.1.0
+	 * @return object
+	 */
+	public static function instance() {
+		if ( is_null( self::$instance ) ) {
+			self::$instance = new self();
+		}
+
+		return self::$instance;
+	}
+
+
+	/**
+	 * Activates the plugin
+	 *
+	 * @since 0.1.0
 	 */
 	public function activate() {
-
+		// register post types & taxonomies
+		// flush_rewrite_rules()
 	}
 
 	/**
 	 * Load functions
+	 *
+	 * @since 0.1.0
 	 */
 	public function include_template_functions() {
 		include( 'wp-mapit-functions.php' );
@@ -52,81 +116,28 @@ class WP_MapIt {
 	}
 
 	/**
-	 * Register and enqueue scripts and css
+	 * Register and enqueue scripts and css for the frontend
+	 *
+	 * @since 0.1.0
+	 * @access public
+	 * @return void
 	 */
 	public function frontend_scripts() {
-//		$ajax_url         = WP_Job_Manager_Ajax::get_endpoint();
-//		$ajax_filter_deps = array( 'jquery', 'jquery-deserialize' );
-//
-//		if ( apply_filters( 'job_manager_chosen_enabled', true ) ) {
-//			wp_register_script( 'chosen', JOB_MANAGER_PLUGIN_URL . '/assets/js/jquery-chosen/chosen.jquery.min.js', array( 'jquery' ), '1.1.0', true );
-//			wp_register_script( 'wp-job-manager-term-multiselect', JOB_MANAGER_PLUGIN_URL . '/assets/js/term-multiselect.min.js', array(
-//				'jquery',
-//				'chosen'
-//			), JOB_MANAGER_VERSION, true );
-//			wp_register_script( 'wp-job-manager-multiselect', JOB_MANAGER_PLUGIN_URL . '/assets/js/multiselect.min.js', array(
-//				'jquery',
-//				'chosen'
-//			), JOB_MANAGER_VERSION, true );
-//			wp_enqueue_style( 'chosen', JOB_MANAGER_PLUGIN_URL . '/assets/css/chosen.css' );
-//			$ajax_filter_deps[] = 'chosen';
-//		}
-//
-//		if ( apply_filters( 'job_manager_ajax_file_upload_enabled', true ) ) {
-//			wp_register_script( 'jquery-iframe-transport', JOB_MANAGER_PLUGIN_URL . '/assets/js/jquery-fileupload/jquery.iframe-transport.js', array( 'jquery' ), '1.8.3', true );
-//			wp_register_script( 'jquery-fileupload', JOB_MANAGER_PLUGIN_URL . '/assets/js/jquery-fileupload/jquery.fileupload.js', array(
-//				'jquery',
-//				'jquery-iframe-transport',
-//				'jquery-ui-widget'
-//			), '5.42.3', true );
-//			wp_register_script( 'wp-job-manager-ajax-file-upload', JOB_MANAGER_PLUGIN_URL . '/assets/js/ajax-file-upload.min.js', array(
-//				'jquery',
-//				'jquery-fileupload'
-//			), JOB_MANAGER_VERSION, true );
-//
-//			ob_start();
-//			get_job_manager_template( 'form-fields/uploaded-file-html.php', array(
-//				'name'      => '',
-//				'value'     => '',
-//				'extension' => 'jpg'
-//			) );
-//			$js_field_html_img = ob_get_clean();
-//
-//			ob_start();
-//			get_job_manager_template( 'form-fields/uploaded-file-html.php', array(
-//				'name'      => '',
-//				'value'     => '',
-//				'extension' => 'zip'
-//			) );
-//			$js_field_html = ob_get_clean();
-//
-//			wp_localize_script( 'wp-job-manager-ajax-file-upload', 'job_manager_ajax_file_upload', array(
-//				'ajax_url'               => $ajax_url,
-//				'js_field_html_img'      => esc_js( str_replace( "\n", "", $js_field_html_img ) ),
-//				'js_field_html'          => esc_js( str_replace( "\n", "", $js_field_html ) ),
-//				'i18n_invalid_file_type' => __( 'Invalid file type. Accepted types:', 'wp-job-manager' )
-//			) );
-//		}
-//
-//		wp_register_script( 'jquery-deserialize', JOB_MANAGER_PLUGIN_URL . '/assets/js/jquery-deserialize/jquery.deserialize.js', array( 'jquery' ), '1.2.1', true );
-//		wp_register_script( 'wp-job-manager-ajax-filters', JOB_MANAGER_PLUGIN_URL . '/assets/js/ajax-filters.min.js', $ajax_filter_deps, JOB_MANAGER_VERSION, true );
-//		wp_register_script( 'wp-job-manager-job-dashboard', JOB_MANAGER_PLUGIN_URL . '/assets/js/job-dashboard.min.js', array( 'jquery' ), JOB_MANAGER_VERSION, true );
-//		wp_register_script( 'wp-job-manager-job-application', JOB_MANAGER_PLUGIN_URL . '/assets/js/job-application.min.js', array( 'jquery' ), JOB_MANAGER_VERSION, true );
-//		wp_register_script( 'wp-job-manager-job-submission', JOB_MANAGER_PLUGIN_URL . '/assets/js/job-submission.min.js', array( 'jquery' ), JOB_MANAGER_VERSION, true );
-//		wp_localize_script( 'wp-job-manager-ajax-filters', 'job_manager_ajax_filters', array(
-//			'ajax_url'                => $ajax_url,
-//			'is_rtl'                  => is_rtl() ? 1 : 0,
-//			'lang'                    => defined( 'ICL_LANGUAGE_CODE' ) ? ICL_LANGUAGE_CODE : '',
-//			// WPML workaround until this is standardized
-//			'i18n_load_prev_listings' => __( 'Load previous listings', 'wp-job-manager' )
-//		) );
-//		wp_localize_script( 'wp-job-manager-job-dashboard', 'job_manager_job_dashboard', array(
-//			'i18n_confirm_delete' => __( 'Are you sure you want to delete this listing?', 'wp-job-manager' )
-//		) );
-//
-//		wp_enqueue_style( 'wp-job-manager-frontend', JOB_MANAGER_PLUGIN_URL . '/assets/css/frontend.css' );
+		wp_enqueue_style( 'wp-mapit-style', plugins_url( 'assets/css/wp-mapit.css', __FILE__ ) );
+		wp_enqueue_script( 'wp-mapit-script', plugins_url( 'assets/js/wp-mapit.js', __FILE__ ) );
 	}
 
 }
 
-$mapit = new WP_MapIt();
+
+/**
+ * Expose the plugin globally
+ *
+ * @since 0.1.0
+ * @return object
+ */
+function wpmapit() {
+	return WP_MapIt::instance();
+}
+
+add_action( 'plugins_loaded', 'wpmapit' );

@@ -5,9 +5,12 @@
   "main": "wp-mapit.php",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "npm run build:js",
-    "build:js": "browserify ./assets/js/src/index.js -t babelify -o ./assets/js/wpmapit.js",
-    "watch:js": "watchify ./assets/js/src/index.js -t babelify -o ./assets/js/wpmapit.js"
+    "build": "npm run build:front:js && npm run build:admin:js",
+    "watch": "nom run watch:front:js && npm run watch:back:js",
+    "build:front:js": "browserify ./assets/js/front/index.js -t babelify -o ./assets/js/wpmapit.js",
+    "build:admin:js": "watchify ./assets/js/admin/index.js -t babelify -o ./assets/js/wpmapit-admin.js",
+    "watch:front:js": "watchify ./assets/js/front/index.js -t babelify -o ./assets/js/wpmapit.js",
+    "watch:admin:js": "watchify ./assets/js/admin/index.js -t babelify -o ./assets/js/wpmapit-admin.js"
   },
   "repository": {
     "type": "git",

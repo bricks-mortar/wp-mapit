@@ -19,22 +19,28 @@ class WP_MapIt_Admin {
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 	}
 
+
 	/**
 	 * admin_enqueue_scripts function.
 	 *
+	 * @since 0.1.0
 	 * @access public
 	 * @return void
 	 */
 	public function admin_enqueue_scripts() {
+		wp_enqueue_style( 'wp-mapit-admin-style', plugins_url( 'assets/css/wp-mapit.css', __FILE__ ) );
+		wp_enqueue_script( 'wp-mapit-admin-script', plugins_url( 'assets/js/wp-mapit.js', __FILE__ ) );
 	}
 
 	/**
 	 * admin_menu function.
 	 *
+	 * @since 0.1.0
 	 * @access public
 	 * @return void
 	 */
 	public function admin_menu() {
+
 	}
 }
 
