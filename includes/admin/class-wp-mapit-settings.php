@@ -14,7 +14,6 @@ class WP_MapIt_Settings {
 	 * Start up
 	 */
 	public function __construct() {
-		add_action( 'admin_menu', array( $this, 'add_plugin_page' ) );
 		add_action( 'admin_init', array( $this, 'page_init' ) );
 	}
 
@@ -23,24 +22,24 @@ class WP_MapIt_Settings {
 	 */
 	public function add_plugin_page() {
 		// This page will be under "Settings"
-		add_options_page(
-			'Settings Admin',
-			'My Settings',
-			'manage_options',
-			'my-setting-admin',
-			array( $this, 'create_admin_page' )
-		);
+//		add_options_page(
+//			'Settings Admin',
+//			'My Settings',
+//			'manage_options',
+//			'my-setting-admin',
+//			array( $this, 'create_admin_page' )
+//		);
 	}
 
 	/**
 	 * Options page callback
 	 */
-	public function create_admin_page() {
+	public function output() {
 		// Set class property
 		$this->options = get_option( 'my_option_name' );
 		?>
 		<div class="wrap">
-			<h2>My Settings</h2>
+			<h2>WP MapIt Settings</h2>
 
 			<form method="post" action="options.php">
 				<?php
@@ -66,14 +65,14 @@ class WP_MapIt_Settings {
 
 		add_settings_section(
 			'setting_section_id', // ID
-			'My Custom Settings', // Title
-			array( $this, 'print_section_info' ), // Callback
+			'Google Maps', // Title
+			array( $this, 'google_maps_section_info' ), // Callback
 			'my-setting-admin' // Page
 		);
 
 		add_settings_field(
 			'id_number', // ID
-			'ID Number', // Title
+			'API Key', // Title
 			array( $this, 'id_number_callback' ), // Callback
 			'my-setting-admin', // Page
 			'setting_section_id' // Section
@@ -81,7 +80,7 @@ class WP_MapIt_Settings {
 
 		add_settings_field(
 			'title',
-			'Title',
+			'API Secret',
 			array( $this, 'title_callback' ),
 			'my-setting-admin',
 			'setting_section_id'
@@ -111,8 +110,8 @@ class WP_MapIt_Settings {
 	/**
 	 * Print the Section text
 	 */
-	public function print_section_info() {
-		print 'Enter your settings below:';
+	public function google_maps_section_info() {
+		print 'Enter your Google Maps API information to override the defaults';
 	}
 
 	/**
@@ -134,8 +133,4 @@ class WP_MapIt_Settings {
 			isset( $this->options['title'] ) ? esc_attr( $this->options['title'] ) : ''
 		);
 	}
-}
-
-if ( is_admin() ) {
-	$my_settings_page = new MySettingsPage();
 }
