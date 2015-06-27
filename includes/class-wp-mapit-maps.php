@@ -4,7 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-class WP_MapIt_Post_Types {
+class WP_MapIt_Maps {
     
     public function __construct() {
 

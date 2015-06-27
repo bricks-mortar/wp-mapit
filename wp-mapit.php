@@ -59,14 +59,14 @@ class WP_MapIt {
 
 
 		// Includes
-		include( 'includes/class-wp-mapit-post-types.php' );
+		include( 'includes/class-wp-mapit-locations.php' );
 
 		if ( is_admin() ) {
 			include( 'includes/admin/class-wp-mapit-admin.php' );
 		}
 
 		// Init classes
-		$this->post_types = new WP_MapIt_Post_Types();
+		$this->locations_post_type = new WP_MapIt_Locations();
 
 		// Activation
 		register_activation_hook( __FILE__, array( $this, 'activate' ) );
