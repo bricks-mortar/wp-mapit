@@ -52,13 +52,13 @@ class WP_MapIt_Admin {
 			'maps_template'
 		) );
 
-		// Single map
-		add_submenu_page( null, __( 'Single Map', 'wp-mapit' ), __( 'Single Map', 'wp-mapit' ), 'manage_options', 'mapit-map', array(
-			$this,
-			'map_template'
-		) );
+		// Single map @todo: provide single map page
+		//add_submenu_page( null, __( 'Single Map', 'wp-mapit' ), __( 'Single Map', 'wp-mapit' ), 'manage_options', 'mapit-map', array(
+		//	$this,
+		//	'map_template'
+		// ) );
 
-		// Settings
+		// Settings @todo: create settings page for customizations
 		// add_submenu_page( 'mapit-maps', __( 'WP MapIt Settings', 'wp-mapit' ), __( 'Settings', 'wp-mapit' ), 'manage_options', 'mapit-settings', array( $this->settings_page, 'output' ) );
 
 		// Support
@@ -87,7 +87,6 @@ class WP_MapIt_Admin {
 	 * @return void
 	 */
 	public function maps_template() {
-
 		echo '<div class="wrap">' .
 		     '<h2>Maps <a href="#" class="add-new-h2">Add New</a></h2>';
 
@@ -95,7 +94,8 @@ class WP_MapIt_Admin {
 		// Create map POST request
 		if ( $_SERVER['REQUEST_METHOD'] === 'POST' ) {
 			$map_name = $_POST['name'];
-			$new_map  = wpmapit()->maps->create_map( $map_name );
+			$map_desc = $_POST['desc'];
+			$new_map  = wpmapit()->maps->create_map( $map_name, $map_desc );
 
 			if ( ! is_wp_error( $new_map ) ) {
 				$success_msg = 'Succesfully created new map: <strong>' . $map_name . '</strong>';
@@ -107,13 +107,28 @@ class WP_MapIt_Admin {
 
 		}
 
-		// Map actions
-		if ( $_SERVER['REQUEST_METHOD'] === 'GET' ) {
+		// Delete map
+		if ( isset( $_GET['delete'] ) ) {
+			$delete_id = $_GET['delete'];
+			$deleted   = wpmapit()->maps->delete_map( $delete_id );
+
+			if ( $deleted ) {
+				$success_msg = 'Map was successfully deleted';
+				echo $this->success_notice( $success_msg );
+			} else {
+				$error_msg = 'Failed to delete your map';
+				echo $this->error_notice( $error_msg );
+			}
+
 
 		}
 
+		// Clean up query string
+		$get_params    = array( 'delete' );
+		$maps_page_url = esc_url( remove_query_arg( $get_params ) );
+
 		// Create map form
-		$this->create_map_form_partial();
+		$this->create_map_form_partial( $maps_page_url );
 
 		// Map listing table
 		$all_maps = wpmapit()->maps->get_maps();
@@ -130,6 +145,7 @@ class WP_MapIt_Admin {
 	 *
 	 * @since 0.1.0
 	 * @access public
+	 * @todo create this page
 	 *
 	 * @return void
 	 */
@@ -139,7 +155,8 @@ class WP_MapIt_Admin {
 		echo '<div class="wrap">';
 
 		if ( ! empty( $map_id ) ) {
-			echo '<h2>' . $map_id . '</h2>';
+			// Edit single map page
+			$this->edit_single_map_partial();
 		} else {
 			// Create new map page
 			$this->create_map_form_partial();
@@ -174,22 +191,22 @@ class WP_MapIt_Admin {
 	 * @access private
 	 * @return void
 	 */
-	private function create_map_form_partial() {
+	private function create_map_form_partial( $action = '' ) {
 		echo '<div class="create-container">' .
-		     '<form id="create-map" method="post" action="">' .
+		     '<form id="create-map" method="post" action="' . $action . '">' .
 		     '<input type="text" name="name" id="map-name" placeholder="Map Name">' .
 		     '<input type="text" name="desc" id="map-desc" placeholder="Map Description">' .
-		     '<button class="add-new-h2" type="submit">' . __( 'Create', 'wp-mapit' ) . '</button>' .
+		     '<button class="button button-primary button-large" type="submit">' . __( 'Create', 'wp-mapit' ) . '</button>' .
 		     '</form>' .
 		     '</div>';
 	}
-
 
 	/**
 	 * Outputs maps listing table
 	 *
 	 * @since 0.1.0
 	 * @access private
+	 * @todo add filters to table
 	 *
 	 * @param $maps Array of map terms
 	 *
@@ -212,25 +229,27 @@ class WP_MapIt_Admin {
 		     . '<td>' . __( 'Name', 'wp-mapit' ) . '</td>'
 		     . '<td>' . __( 'Description', 'wp-mapit' ) . '</td>'
 		     . '<td>' . __( 'Shortcode', 'wp-mapit' ) . '</td>'
+		     . '<td>' . __( 'Locations', 'wp-mapit' ) . '</td>'
 		     . '<td>' . __( 'Actions', 'wp-mapit' ) . '</td>'
 		     . '</tr></thead>';
 
 
 		// table body
 		echo '<tbody id="the-list">';
-
 		if ( ! empty( $maps ) && ! is_wp_error( $maps ) ) {
 			foreach ( $maps as $map ) {
-				echo '<tr>'
+				$locations  = wpmapit()->maps->get_map_locations( $map->term_id );
+				$delete_url = add_query_arg( 'delete', $map->term_id );
+				echo '<tr data-mapid="' . $map->term_id . '">'
 				     . '<td>' . $map->term_id . '</td>'
 				     . '<td>' . $map->name . '</td>'
 				     . '<td>' . $map->description . '</td>'
-				     . '<td> [wpmapit id="' . $map->term_id . '"]</td>'
-				     . '<td><button>edit</button><button>x</button></td>'
+				     . '<td><input type="text" value="[wpmapit id=' . $map->term_id . ']" disabled></td>'
+				     . '<td>' . count( $locations ) . '</td>'
+				     . '<td><a href="' . $delete_url . '">x</a></td>'
 				     . '</tr>';
 			}
 		}
-
 		echo '</tbody>';
 
 		// table close
@@ -238,6 +257,14 @@ class WP_MapIt_Admin {
 		     . '</form>'
 		     . '</div>';
 	}
+
+	/**
+	 * coming soon!
+	 */
+	private function edit_single_map_partial() {
+
+	}
+
 }
 
 new WP_MapIt_Admin();
