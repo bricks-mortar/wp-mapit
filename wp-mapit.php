@@ -60,6 +60,7 @@ class WP_MapIt {
 
 		// Includes
 		include( 'includes/class-wp-mapit-locations.php' );
+		include( 'includes/class-wp-mapit-maps.php' );
 
 		if ( is_admin() ) {
 			include( 'includes/admin/class-wp-mapit-admin.php' );
@@ -67,6 +68,7 @@ class WP_MapIt {
 
 		// Init classes
 		$this->locations_post_type = new WP_MapIt_Locations();
+		$this->maps = new WP_MapIt_Maps();
 
 		// Activation
 		register_activation_hook( __FILE__, array( $this, 'activate' ) );
