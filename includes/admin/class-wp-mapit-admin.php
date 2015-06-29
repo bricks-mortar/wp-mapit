@@ -53,9 +53,9 @@ class WP_MapIt_Admin {
 		) );
 
 		// Single map
-		add_submenu_page( null, __( 'Single Map', 'wp-mapit' ), __( 'Single Map', 'wp-mapit' ), 'manage_options', 'mapit-manage-map', array(
+		add_submenu_page( null, __( 'Single Map', 'wp-mapit' ), __( 'Single Map', 'wp-mapit' ), 'manage_options', 'mapit-map', array(
 			$this,
-			'manage_map_template'
+			'map_template'
 		) );
 
 		// Settings
@@ -123,7 +123,17 @@ class WP_MapIt_Admin {
 	}
 
 
-	public function manage_map_template() {
+	/**
+	 * mapit-map
+	 * Create a new map if map-id param isn't passed
+	 * Edit map page if map-id param is passed
+	 *
+	 * @since 0.1.0
+	 * @access public
+	 *
+	 * @return void
+	 */
+	public function map_template() {
 		$map_id = $_GET['map-id'];
 
 		echo '<div class="wrap">';
@@ -131,7 +141,8 @@ class WP_MapIt_Admin {
 		if ( ! empty( $map_id ) ) {
 			echo '<h2>' . $map_id . '</h2>';
 		} else {
-			echo '<h2>Theres no map with this id!</h2>';
+			// Create new map page
+			$this->create_map_form_partial();
 		}
 
 		echo '</div>';
