@@ -4,13 +4,38 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Class WP_MapIt_Maps
+ *
+ * @class WP_MapIt_Maps
+ * @version 0.1.0
+ * @author Dane Grant
+ *
+ */
 class WP_MapIt_Maps {
 
+	/**
+	 * Initialize the class
+	 *
+	 * @since 0.1.0
+	 */
 	public function __construct() {
 		add_action( 'init', array( $this, 'maps_taxonomy' ), 0 );
 	}
 
+
+	/**
+	 * Register map taxonomy
+	 *
+	 * @since 0.1.0
+	 * @access public
+	 */
 	public function maps_taxonomy() {
+
+		if ( taxonomy_exists( 'mapit-maps' ) ) {
+			return;
+		}
+
 		$labels = array(
 			'name'                       => _x( 'Maps', 'Taxonomy General Name', 'wp-mapit' ),
 			'singular_name'              => _x( 'Map', 'Taxonomy Singular Name', 'wp-mapit' ),
@@ -30,7 +55,8 @@ class WP_MapIt_Maps {
 			'search_items'               => __( 'Search Items', 'wp-mapit' ),
 			'not_found'                  => __( 'Not Found', 'wp-mapit' ),
 		);
-		$args   = array(
+
+		$args = array(
 			'labels'            => $labels,
 			'hierarchical'      => true,
 			'public'            => false,
@@ -39,10 +65,22 @@ class WP_MapIt_Maps {
 			'show_in_nav_menus' => false,
 			'show_tagcloud'     => false,
 		);
+
 		register_taxonomy( 'mapit_maps', array( 'mapit_locations' ), $args );
 	}
 
+
+	/**
+	 * Create a new map
+	 *
+	 * @since 0.1.0
+	 * @access public
+	 *
+	 * @param $name
+	 * @param string $desc
+	 */
 	public function create_map( $name, $desc = '' ) {
+
 		if ( empty( $name ) ) {
 			echo 'Please name your map!';
 
@@ -59,7 +97,17 @@ class WP_MapIt_Maps {
 		return wp_insert_term( $name, 'mapit_maps', $args );
 	}
 
+
+	/**
+	 * Returns all maps
+	 *
+	 * @since 0.1.0
+	 * @access public
+	 *
+	 * @return mixed
+	 */
 	public function get_maps() {
+
 		$args = array(
 			'hide_empty' => 0
 		);
@@ -67,12 +115,35 @@ class WP_MapIt_Maps {
 		return get_terms( 'mapit_maps', $args );
 	}
 
+
+	/**
+	 * Returns a single map
+	 *
+	 * @since 0.1.0
+	 * @access public
+	 *
+	 * @param $id
+	 *
+	 * @return mixed
+	 */
 	public function get_map( $id ) {
 
 		return get_term_by( 'id', $id, 'mapit_maps' );
 	}
 
+
+	/**
+	 * Returns all location posts assigned to a map
+	 *
+	 * @since 0.1.0
+	 * @access public
+	 *
+	 * @param $id
+	 *
+	 * @return mixed
+	 */
 	public function get_map_locations( $id ) {
+
 		$args = array(
 			'post_type' => 'mapit_locations',
 			'tax_query' => array(
@@ -87,7 +158,19 @@ class WP_MapIt_Maps {
 		return get_posts( $args );
 	}
 
+
+	/**
+	 * Deletes a map
+	 *
+	 * @since 0.1.0
+	 * @access public
+	 *
+	 * @param $id
+	 *
+	 * @return mixed
+	 */
 	public function delete_map( $id ) {
+
 		return wp_delete_term( $id, 'mapit_maps' );
 	}
 
