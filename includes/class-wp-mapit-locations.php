@@ -22,6 +22,8 @@ class WP_MapIt_Locations {
 	 */
 	public function __construct() {
 		add_action( 'init', array( $this, 'locations_post_type' ) );
+
+		add_action( 'update_post_meta', array( $this, 'maybe_update_location_meta' ), 10, 4 );
 	}
 
 
@@ -31,7 +33,7 @@ class WP_MapIt_Locations {
 	 * @since 0.1.0
 	 * @access public
 	 */
-	function locations_post_type() {
+	public function locations_post_type() {
 
 		if ( post_type_exists( 'mapit_locations' ) ) {
 			return;
@@ -55,7 +57,7 @@ class WP_MapIt_Locations {
 			'not_found_in_trash' => __( 'Not found in Trash', 'wp_mapit' ),
 		);
 
-		$args   = array(
+		$args = array(
 			'label'               => __( 'mapit_locations', 'wp_mapit' ),
 			'description'         => __( 'Default post type to map locations to maps', 'wp_mapit' ),
 			'labels'              => $labels,
@@ -77,6 +79,27 @@ class WP_MapIt_Locations {
 		);
 
 		register_post_type( 'mapit_locations', $args );
+	}
+
+
+	/**
+	 * Desc
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param $meta_id
+	 * @param $object_id
+	 * @param $meta_key
+	 * @param $_meta_value
+	 */
+	public function maybe_update_location_meta( $meta_id, $object_id, $meta_key, $_meta_value ) {
+		$location_is_updated   = strpos( $meta_key, 'mapit' ) !== false;
+		$post_type_is_location =
+			( get_post_type( $object_id ) === 'mapit_locations' ) ? true : false;
+
+		if ( $post_type_is_location && $location_is_updated ) {
+			do_action( 'mapit_location_changed', $object_id, $_meta_value );
+		}
 	}
 
 }

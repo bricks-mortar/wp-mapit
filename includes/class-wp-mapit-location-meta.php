@@ -1,15 +1,22 @@
 <?php
+/**
+ * Meta data for locations
+ *
+ * @since 1.0.0
+ *
+ * @package WordPress\WP_MapIt
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+
 /**
  * Class WP_MapIt_Location_Meta
  *
  * @class WP_MapIt_Location_Meta
- * @version 0.1.0
- * @author Dane Grant
+ * @version 1.0.0
  *
  * @todo: Allow creation multiple custom meta boxes
  */
@@ -17,9 +24,19 @@ class WP_MapIt_Location_Meta {
 
 
 	/**
+	 * Prefix for field keys
+	 *
+	 * @since 1.0.0
+	 * @access private
+	 *
+	 * @var string
+	 */
+	private $prefix = 'mapit_';
+
+	/**
 	 * Initialize the class
 	 *
-	 * @since 0.1.0
+	 * @since 1.0.0
 	 */
 	public function __construct() {
 		$this->location_fields = $this->meta_fields();
@@ -32,32 +49,37 @@ class WP_MapIt_Location_Meta {
 	/**
 	 * Array of meta box fields
 	 *
-	 * @since 0.1.0
-	 * @access public
+	 * @since 1.0.0
+	 * @access private
 	 *
-	 * @return array
+	 * @return array $fields
 	 */
-	public function meta_fields() {
-		$prefix                = 'mapit_';
+	private function meta_fields() {
+
 		$fields = array(
 			array(
 				'label' => 'Address',
-				'id'    => $prefix . 'address',
+				'id'    => $this->prefix . 'address',
 				'type'  => 'text'
 			),
 			array(
 				'label' => 'City',
-				'id'    => $prefix . 'city',
+				'id'    => $this->prefix . 'city',
 				'type'  => 'text'
 			),
 			array(
 				'label' => 'State',
-				'id'    => $prefix . 'state',
+				'id'    => $this->prefix . 'state',
 				'type'  => 'text'
 			),
 			array(
 				'label' => 'Zip code',
-				'id'    => $prefix . 'zip',
+				'id'    => $this->prefix . 'zip',
+				'type'  => 'text'
+			),
+			array(
+				'label' => 'Country',
+				'id'    => $this->prefix . 'country',
 				'type'  => 'text'
 			),
 		);
@@ -69,8 +91,9 @@ class WP_MapIt_Location_Meta {
 	/**
 	 * Add the meta box container
 	 *
-	 * @since 0.1.0
-	 * @access public
+	 * @since 1.0.0
+	 *
+	 * @param string $post_type
 	 */
 	public function add_meta_box( $post_type ) {
 		add_meta_box(
@@ -87,8 +110,7 @@ class WP_MapIt_Location_Meta {
 	/**
 	 * Save location meta fields
 	 *
-	 * @since 0.1.0
-	 * @access public
+	 * @since 1.0.0
 	 *
 	 * @param $post_id
 	 *
@@ -128,6 +150,8 @@ class WP_MapIt_Location_Meta {
 		}
 
 
+		$field_changed = false;
+
 		// Save all fields
 		foreach ( $this->location_fields as $field ) {
 
@@ -136,20 +160,26 @@ class WP_MapIt_Location_Meta {
 
 			if ( $new && $new != $old ) {
 				// Save field value if changed
+				$field_changed = true;
 				update_post_meta( $post_id, $field['id'], $new );
 			} elseif ( '' == $new && $old ) {
 				// Delete field if empty
 				delete_post_meta( $post_id, $field['id'], $old );
 			}
 		}
+
+		if ( $field_changed ) {
+			do_action( 'mapit_location_updated', $this->location_fields );
+		}
+
+		return $field_changed;
 	}
 
 
 	/**
 	 * Display the meta box on post edit page
 	 *
-	 * @since 0.1.0
-	 * @access public
+	 * @since 1.0.0
 	 *
 	 * @param $post
 	 */
@@ -179,5 +209,55 @@ class WP_MapIt_Location_Meta {
 		}
 		echo '</table>';
 	}
+
+
+	/**
+	 * Return an array of all location meta fields
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param mixed $post_id optional
+	 *
+	 * @return array
+	 */
+	public function get_location_fields( $post_id = false ) {
+		$post_id     = apply_filters( 'wpmapit/get_post_id', $post_id );
+		$meta_fields = get_post_meta( $post_id );
+
+		$location_fields = array_intersect_key(
+			$meta_fields,
+			array_flip(
+				array_filter(
+					array_keys( $meta_fields ),
+					function ( $v ) {
+						return strpos( $v, 'mapit_' ) !== false;
+					}
+				)
+			)
+		);
+
+		return $location_fields;
+	}
+
+
+	/**
+	 * Returns a single location field
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param $field_name
+	 * @param bool $post_id
+	 *
+	 * @return string
+	 */
+	public function get_location_field( $field_name, $post_id = false ) {
+		$field_name = $this->prefix . $field_name;
+		$post_id    = apply_filters( 'wpmapit/get_post_id', $post_id );
+
+		$meta_field = get_post_meta( $post_id, $field_name, true );
+
+		return $meta_field;
+	}
+
 
 }
