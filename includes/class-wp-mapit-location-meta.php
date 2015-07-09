@@ -232,7 +232,7 @@ class WP_MapIt_Location_Meta {
 	 *
 	 * @return array
 	 */
-	public function get_location_fields( $post_id = false ) {
+	public static function get_location_fields( $post_id = false ) {
 		$post_id     = apply_filters( 'wpmapit/get_post_id', $post_id );
 		$meta_fields = get_post_meta( $post_id );
 
@@ -267,7 +267,7 @@ class WP_MapIt_Location_Meta {
 	 *
 	 * @return string
 	 */
-	public function get_location_field( $field_name, $post_id = false ) {
+	public static function get_location_field( $field_name, $post_id = false ) {
 		$field_name = $this->prefix . $field_name;
 		$post_id    = apply_filters( 'wpmapit/get_post_id', $post_id );
 

@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npm run build:front:js && npm run build:admin:js",
-    "watch": "nom run watch:front:js && npm run watch:back:js",
+    "watch": "npm run watch:front:js && npm run watch:back:js",
     "build:front:js": "browserify ./assets/js/front/index.js -t babelify -o ./assets/js/wpmapit.js",
     "build:admin:js": "watchify ./assets/js/admin/index.js -t babelify -o ./assets/js/wpmapit-admin.js",
     "watch:front:js": "watchify ./assets/js/front/index.js -t babelify -o ./assets/js/wpmapit.js",
@@ -26,6 +26,16 @@
     "babel-eslint": "^3.1.17",
     "babelify": "^6.1.2",
     "browserify": "^10.2.4",
+    "del": "^1.2.0",
+    "gulp": "^3.9.0",
+    "gulp-minify-css": "^1.2.0",
+    "gulp-sass": "^2.0.3",
+    "gulp-sourcemaps": "^1.5.2",
+    "gulp-uglify": "^1.2.0",
+    "node-bourbon": "^4.2.3",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0",
     "watchify": "^3.2.2"
-  }
+  },
+  "dependencies": {}
 }

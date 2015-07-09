@@ -66,6 +66,7 @@ if ( ! class_exists( 'WP_MapIt' ) ):
 			include( 'includes/class-wp-mapit-maps.php' );
 			include( 'includes/class-wp-mapit-location-meta.php' );
 			include( 'includes/class-wp-mapit-geocode.php' );
+			include( 'includes/class-wp-mapit-shortcodes.php' );
 
 
 			if ( is_admin() ) {
@@ -126,7 +127,10 @@ if ( ! class_exists( 'WP_MapIt' ) ):
 		 */
 		public function frontend_scripts() {
 			wp_enqueue_style( 'wp-mapit-style', plugins_url( 'assets/css/wp-mapit.css', __FILE__ ) );
-			wp_enqueue_script( 'wp-mapit-script', plugins_url( 'assets/js/wp-mapit.js', __FILE__ ) );
+
+			wp_enqueue_script( 'google-maps', 'https://maps.googleapis.com/maps/api/js?v=3&sensor=false', array( 'jquery' ), null, true );
+			// todo: grab version from
+			wp_enqueue_script( 'wp-mapit-script', plugins_url( 'assets/js/wp-mapit.js', __FILE__ ), array( 'jquery', 'google-maps' ), '1.0.0', true );
 		}
 
 	}

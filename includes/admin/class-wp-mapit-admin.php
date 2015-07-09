@@ -28,8 +28,8 @@ class WP_MapIt_Admin {
 	 * @return void
 	 */
 	public function admin_enqueue_scripts() {
-		wp_enqueue_style( 'wp-mapit-admin-style', plugins_url( 'assets/css/wp-mapit.css', __FILE__ ) );
-		wp_enqueue_script( 'wp-mapit-admin-script', plugins_url( 'assets/js/wp-mapit.js', __FILE__ ) );
+		wp_enqueue_style( 'wp-mapit-admin-style', plugins_url( '/wp-mapit/assets/css/wp-mapit-admin.css' ) );
+		// wp_enqueue_script( 'wp-mapit-admin-script', plugins_url( 'assets/js/wp-mapit.js', __FILE__ ) );
 	}
 
 	/**
@@ -134,6 +134,22 @@ class WP_MapIt_Admin {
 		$all_maps = wpmapit()->maps->get_maps();
 		$this->maps_table_partial( $all_maps );
 
+		echo "
+		<script>
+		jQuery(function($) {
+			$('.add-new-h2').click(function(e) {
+				e.preventDefault();
+				$('#create-map').slideToggle(250);
+			});
+
+			$('.del-map').click(function(e) {
+				if (!confirm('Are you sure you want to delete this map?')) {
+					e.preventDefault();
+				}
+			});
+		});
+		</script>
+		";
 
 	}
 
@@ -196,7 +212,7 @@ class WP_MapIt_Admin {
 		     '<form id="create-map" method="post" action="' . $action . '">' .
 		     '<input type="text" name="name" id="map-name" placeholder="Map Name">' .
 		     '<input type="text" name="desc" id="map-desc" placeholder="Map Description">' .
-		     '<button class="button button-primary button-large" type="submit">' . __( 'Create', 'wp-mapit' ) . '</button>' .
+		     '<button class="button button-primary button-medium" type="submit">' . __( 'Create', 'wp-mapit' ) . '</button>' .
 		     '</form>' .
 		     '</div>';
 	}
@@ -246,7 +262,7 @@ class WP_MapIt_Admin {
 				     . '<td>' . $map->description . '</td>'
 				     . '<td><input type="text" value="[wpmapit id=' . $map->term_id . ']" disabled></td>'
 				     . '<td>' . count( $locations ) . '</td>'
-				     . '<td><a href="' . $delete_url . '">x</a></td>'
+				     . '<td><a class="del-map" href="' . $delete_url . '">x</a></td>'
 				     . '</tr>';
 			}
 		}

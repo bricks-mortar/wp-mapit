@@ -106,7 +106,7 @@ class WP_MapIt_Maps {
 	 *
 	 * @return mixed
 	 */
-	public function get_maps() {
+	public static function get_maps() {
 
 		$args = array(
 			'hide_empty' => 0
@@ -126,7 +126,7 @@ class WP_MapIt_Maps {
 	 *
 	 * @return mixed
 	 */
-	public function get_map( $id ) {
+	public static function get_map( $id ) {
 
 		return get_term_by( 'id', $id, 'mapit_maps' );
 	}
@@ -142,7 +142,7 @@ class WP_MapIt_Maps {
 	 *
 	 * @return mixed
 	 */
-	public function get_map_locations( $id ) {
+	public static function get_map_locations( $id ) {
 
 		$args = array(
 			'post_type' => 'mapit_locations',

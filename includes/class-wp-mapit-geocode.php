@@ -38,8 +38,13 @@ class WP_MapIt_Geocode {
 	public function update_location_coordinates( $post_id = false ) {
 		$post_id         = apply_filters( 'wpmapit/get_post_id', $post_id );
 		$location_fields = wpmapit()->location_meta->get_location_fields( $post_id );
-		$address         = $this->format_address( $location_fields );
-		$coordinates     = $this->get_coordinates( $address );
+
+		$address     = $this->format_address( $location_fields );
+		$normalized  = $this->normalize_address( $address );
+		$coordinates = $this->get_coordinates( $normalized );
+
+		wpmapit()->location_meta->set_location_field( 'full_addr', $address, $post_id );
+		wpmapit()->location_meta->set_location_field( 'normalized_addr', $normalized, $post_id );
 
 		if ( ! empty( $coordinates ) ) {
 			foreach ( $coordinates as $key => $value ) {
@@ -63,13 +68,11 @@ class WP_MapIt_Geocode {
 	 * @return string
 	 */
 	public function format_address( $fields ) {
-		$full_address = $fields['mapit_address'] . ' ' .
-		                $fields['mapit_city'] . ', ' .
-		                $fields['mapit_state'] . ' ' .
-		                $fields['mapit_zip'] . ' ' .
-		                $fields['mapit_country'];
-
-		return $this->normalize_address( $full_address );
+		return $fields['mapit_address'] . ' ' .
+		       $fields['mapit_city'] . ', ' .
+		       $fields['mapit_state'] . ' ' .
+		       $fields['mapit_zip'] . ' ' .
+		       $fields['mapit_country'];
 	}
 
 
