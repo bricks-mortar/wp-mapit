@@ -65,6 +65,8 @@ if ( ! class_exists( 'WP_MapIt' ) ):
 			include( 'includes/class-wp-mapit-locations.php' );
 			include( 'includes/class-wp-mapit-maps.php' );
 			include( 'includes/class-wp-mapit-location-meta.php' );
+			include( 'includes/class-wp-mapit-geocode.php' );
+
 
 			if ( is_admin() ) {
 				include( 'includes/admin/class-wp-mapit-admin.php' );

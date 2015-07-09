@@ -23,7 +23,7 @@ class WP_MapIt_Locations {
 	public function __construct() {
 		add_action( 'init', array( $this, 'locations_post_type' ) );
 
-		add_action( 'update_post_meta', array( $this, 'maybe_update_location_meta' ), 10, 4 );
+//		add_action( 'update_post_meta', array( $this, 'maybe_update_location_meta' ), 10, 4 );
 	}
 
 
@@ -97,8 +97,9 @@ class WP_MapIt_Locations {
 		$post_type_is_location =
 			( get_post_type( $object_id ) === 'mapit_locations' ) ? true : false;
 
-		if ( $post_type_is_location && $location_is_updated ) {
-			do_action( 'mapit_location_changed', $object_id, $_meta_value );
+
+		if ( $post_type_is_location ) {
+			do_action( 'mapit_location_changed', $_meta_value );
 		}
 	}
 

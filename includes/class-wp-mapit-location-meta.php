@@ -47,6 +47,18 @@ class WP_MapIt_Location_Meta {
 
 
 	/**
+	 * Returns meta field prefix
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string
+	 */
+	public function get_prefix() {
+		return $this->prefix;
+	}
+
+
+	/**
 	 * Array of meta box fields
 	 *
 	 * @since 1.0.0
@@ -169,7 +181,7 @@ class WP_MapIt_Location_Meta {
 		}
 
 		if ( $field_changed ) {
-			do_action( 'mapit_location_updated', $this->location_fields );
+			do_action( 'mapit_update_coordinates', $post_id );
 		}
 
 		return $field_changed;
@@ -224,14 +236,19 @@ class WP_MapIt_Location_Meta {
 		$post_id     = apply_filters( 'wpmapit/get_post_id', $post_id );
 		$meta_fields = get_post_meta( $post_id );
 
-		$location_fields = array_intersect_key(
-			$meta_fields,
-			array_flip(
-				array_filter(
-					array_keys( $meta_fields ),
-					function ( $v ) {
-						return strpos( $v, 'mapit_' ) !== false;
-					}
+
+		$location_fields = array_map(
+			function ( $val ) {
+				return $val[0];
+			}, array_intersect_key(
+				$meta_fields,
+				array_flip(
+					array_filter(
+						array_keys( $meta_fields ),
+						function ( $v ) {
+							return strpos( $v, 'mapit_' ) !== false;
+						}
+					)
 				)
 			)
 		);
@@ -259,5 +276,11 @@ class WP_MapIt_Location_Meta {
 		return $meta_field;
 	}
 
+
+	public function set_location_field( $field_name, $field_value, $post_id = false ) {
+		$prefix = $this->get_prefix();
+
+		update_post_meta( $post_id, $prefix . $field_name, $field_value );
+	}
 
 }
